@@ -76,7 +76,7 @@
         }
         .btn-blue:hover { background-color: #1d4ed8; transform: translateY(-2px); shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
         .btn-blue:active { transform: scale(0.98); }
-        
+        .btn-check-disabled { opacity: 0.3; cursor: not-allowed !important; filter: grayscale(1); pointer-events: none; }
         .loader {
             border: 6px solid #f3f3f3;
             border-top: 6px solid #2563eb;
@@ -120,16 +120,46 @@
         </div>
         <div class="bg-white p-3 md:p-8 rounded-[24px] md:rounded-[40px] shadow-sm border border-slate-50 flex flex-col justify-between hover:shadow-xl transition-all duration-500 h-full">
             <div class="text-center md:text-left mb-2">
-                <div class="text-3xl md:text-5xl mb-1 md:mb-6">🌍</div>
-                <h3 class="text-[13px] md:text-2xl font-black mb-1 uppercase italic leading-tight">Курсы Валют</h3>
-                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Актуальный курс через API.</p>
+                <div class="text-3xl md:text-5xl mb-1 md:mb-6">💱</div>
+                <h3 class="text-[13px] md:text-2xl font-black mb-1 uppercase italic leading-tight">Конвертер валют</h3>
+                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Быстрый расчет курсов валют через API.</p>
             </div>
             <div class="flex-grow flex flex-col justify-end">
                 <form action="https://tools.buskersound.ru/process?service=curcalc" method="post" enctype="multipart/form-data" class="m-0 flex flex-col h-full">
-                    <div class="min-h-[220px]">
-                        <textarea name="data" placeholder="100 RUB to USD" class="w-full mb-4 p-4 bg-slate-100 rounded-2xl h-32 outline-none font-bold resize-none"></textarea>
+                <div class="min-h-[220px] flex flex-col gap-3">
+                    <div class="w-full">
+                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1 ml-1">Сумма для перевода</p>
+                        <input type="number" name="amount" placeholder="Сумма..." 
+                            class="w-full p-3 bg-slate-100 rounded-xl outline-none font-bold text-slate-700 border-2 border-transparent focus:border-blue-500" required>
                     </div>
-                    <button type="submit" class="btn-blue mt-auto">РАССЧИТАТЬ</button>
+                    
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1">
+                            <p class="text-[10px] font-black uppercase text-slate-400 mb-1 ml-1">Из</p>
+                            <select name="base" class="w-full p-3 bg-slate-100 rounded-xl outline-none text-sm font-bold text-slate-600 border-2 border-transparent focus:border-blue-500 cursor-pointer">
+                                <option value="USD">USD</option><option value="EUR">EUR</option><option value="RUB">RUB</option><option value="AMD">AMD</option><option value="BYN">BYN</option><option value="KZT">KZT</option><option value="CNY">CNY</option><option value="TRY">TRY</option><option value="AED">AED</option><option value="GEL">GEL</option><option value="CHF">CHF</option><option value="JPY">JPY</option><option value="INR">INR</option><option value="THB">THB</option><option value="UAH">UAH</option><option value="RSD">RSD</option><option value="ILS">ILS</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mt-5 text-slate-400 font-bold">→</div>
+                        
+                        <div class="flex-1">
+                            <p class="text-[10px] font-black uppercase text-slate-400 mb-1 ml-1">В</p>
+                            <select name="target" class="w-full p-3 bg-slate-100 rounded-xl outline-none text-sm font-bold text-slate-600 border-2 border-transparent focus:border-blue-500 cursor-pointer">
+                                <option value="USD" >USD</option><option value="EUR" >EUR</option><option value="RUB" selected>RUB</option><option value="AMD" >AMD</option><option value="BYN" >BYN</option><option value="KZT" >KZT</option><option value="CNY" >CNY</option><option value="TRY" >TRY</option><option value="AED" >AED</option><option value="GEL" >GEL</option><option value="CHF" >CHF</option><option value="JPY" >JPY</option><option value="INR" >INR</option><option value="THB" >THB</option><option value="UAH" >UAH</option><option value="RSD" >RSD</option><option value="ILS" >ILS</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" name="data" id="hidden_data_curcalc">
+                </div>
+                
+                <button type="submit" class="btn-blue mt-auto w-full" onclick="
+                    const card = this.closest('.bg-white') || this.closest('form') || document;
+                    const amount = card.querySelector('[name=\'amount\']').value;
+                    const base = card.querySelector('[name=\'base\']').value;
+                    const target = card.querySelector('[name=\'target\']').value;
+                    document.getElementById('hidden_data_curcalc').value = amount + ' ' + base + ' TO ' + target;
+                ">Рассчитать</button>
                 </form>
             </div>
         </div>
@@ -184,14 +214,78 @@
             <div class="text-center md:text-left mb-2">
                 <div class="text-3xl md:text-5xl mb-1 md:mb-6">📲</div>
                 <h3 class="text-[13px] md:text-2xl font-black mb-1 uppercase italic leading-tight">QR Код</h3>
-                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Создать QR из ссылки.</p>
+                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Цветной QR с вашим логотипом.</p>
             </div>
             <div class="flex-grow flex flex-col justify-end">
                 <form action="https://tools.buskersound.ru/process?service=qrgen" method="post" enctype="multipart/form-data" class="m-0 flex flex-col h-full">
-                    <div class="min-h-[220px]">
-                        <textarea name="data" placeholder="Ссылка..." class="w-full mb-4 p-4 bg-slate-100 rounded-2xl h-32 outline-none font-bold resize-none"></textarea>
+                    <div class="min-h-[220px] flex flex-col gap-3">
+                        <div class="flex justify-center bg-white p-2 rounded-2xl border-2 border-dashed border-slate-200 mb-1">
+                            <img id="qr_preview" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Preview" 
+                                 class="w-32 h-32 object-contain transition-all duration-300" alt="Превью">
+                        </div>
+
+                        <textarea id="qr_data" name="data" required placeholder="Введите ссылку или текст..." 
+                            oninput="updateQRPreview()"
+                            class="w-full p-3 bg-slate-100 rounded-xl outline-none text-sm border-2 border-transparent focus:border-blue-500 resize-none h-16"></textarea>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex flex-col bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                <label class="text-[9px] font-black uppercase text-slate-400 mb-1">Стиль QR</label>
+                                <select id="qr_style" name="qr_style" onchange="updateQRPreview()" class="bg-transparent text-[11px] font-bold outline-none cursor-pointer">
+                                    <option value="rounded">Скругленный</option>
+                                    <option value="classic">Классический</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                <label class="text-[9px] font-black uppercase text-slate-400 mb-1">Форма лого</label>
+                                <select id="logo_shape" name="logo_shape" onchange="updateQRPreview()" class="bg-transparent text-[11px] font-bold outline-none cursor-pointer">
+                                    <option value="circle">Круглый</option>
+                                    <option value="soft">Мягкие углы</option>
+                                    <option value="square">Квадрат</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                             <div class="flex flex-col border-r pr-2 border-slate-200">
+                                <label class="text-[9px] font-black uppercase text-slate-400 mb-1">Цвет</label>
+                                <input id="qr_color" type="color" name="qr_color" value="#000000" onchange="updateQRPreview()" class="w-8 h-6 cursor-pointer bg-transparent border-none">
+                            </div>
+                            <div class="flex-1">
+                                <label class="text-[9px] font-black uppercase text-slate-400 mb-1 block">Логотип (PNG/JPG)</label>
+                                <input id="qr_logo_input" type="file" name="logo" accept="image/*" onchange="updateQRPreview()" class="text-[10px] text-slate-500 w-full">
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-blue mt-auto">СОЗДАТЬ QR</button>
+                    <button type="submit" class="btn-blue mt-auto w-full">СОЗДАТЬ QR</button>
+                    
+                    <script>
+                    let qrTimeout;
+                    async function updateQRPreview() {
+                        clearTimeout(qrTimeout);
+                        qrTimeout = setTimeout(async () => {
+                            const preview = document.getElementById('qr_preview');
+                            const formData = new FormData();
+                            formData.append('data', document.getElementById('qr_data').value || 'Preview');
+                            formData.append('qr_color', document.getElementById('qr_color').value);
+                            formData.append('qr_style', document.getElementById('qr_style').value);
+                            formData.append('logo_shape', document.getElementById('logo_shape').value);
+                            
+                            const logoFile = document.getElementById('qr_logo_input').files[0];
+                            if (logoFile) formData.append('logo', logoFile);
+
+                            try {
+                                const response = await fetch('/qr_live_preview', { method: 'POST', body: formData });
+                                const result = await response.json();
+                                if (result.img) {
+                                    preview.src = result.img;
+                                    preview.style.opacity = '1';
+                                }
+                            } catch (e) { console.error('Preview error:', e); }
+                        }, 300);
+                    }
+                    updateQRPreview();
+                    </script>
                 </form>
             </div>
         </div>
@@ -435,16 +529,47 @@
         <div class="bg-white p-3 md:p-8 rounded-[24px] md:rounded-[40px] shadow-sm border border-slate-50 flex flex-col justify-between hover:shadow-xl transition-all duration-500 h-full">
             <div class="text-center md:text-left mb-2">
                 <div class="text-3xl md:text-5xl mb-1 md:mb-6">🎵</div>
-                <h3 class="text-[13px] md:text-2xl font-black mb-1 uppercase italic leading-tight">Аудио из видео</h3>
-                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Извлечь MP3 из MP4.</p>
+                <h3 class="text-[13px] md:text-2xl font-black mb-1 uppercase italic leading-tight">Аудио Студия</h3>
+                <p class="text-slate-400 text-[9px] md:text-sm font-medium leading-tight line-clamp-2">Извлечь звук или наложить музыку на видео.</p>
             </div>
             <div class="flex-grow flex flex-col justify-end">
-                <form action="https://tools.buskersound.ru/process?service=video_to_audio" method="post" enctype="multipart/form-data" class="m-0 flex flex-col h-full">
-                    <div class="min-h-[220px] flex items-center justify-center italic text-slate-400 text-sm">Выберите изображение для иконки</div>
-                    <div class="mt-auto">
-                        <input type="file" name="file" id="f_video_to_audio" class="hidden" onchange="this.closest('form').dispatchEvent(new Event('submit', {cancelable: true})); this.form.submit();">
-                        <label for="f_video_to_audio" class="btn-blue cursor-pointer text-center block w-full">ИЗВЛЕЧЬ</label>
+                <form action="https://tools.buskersound.ru/process?service=audio_studio" method="post" enctype="multipart/form-data" class="m-0 flex flex-col h-full">
+                    <div class="min-h-[200px] flex flex-col gap-3">
+                        <div class="flex flex-col bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <label class="text-[10px] font-black uppercase text-slate-400 mb-2">1. Видео файл (MP4/MOV)</label>
+                            <input type="file" name="file" accept="video/*" required class="text-xs text-slate-500">
+                        </div>
+                        
+                        <div class="flex flex-col bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <label class="text-[10px] font-black uppercase text-slate-400 mb-2">2. Что сделать?</label>
+                            <select name="audio_mode" id="audio_mode" onchange="toggleAudioInput()" class="bg-transparent text-sm font-bold outline-none cursor-pointer">
+                                <option value="extract">Извлечь звук (в MP3)</option>
+                                <option value="merge">Наложить мою музыку + Fade Out</option>
+                            </select>
+                        </div>
+
+                        <div id="audio_input_block" class="hidden flex flex-col bg-blue-50 p-3 rounded-xl border border-blue-100 transition-all">
+                            <label class="text-[10px] font-black uppercase text-blue-400 mb-2">3. Твой аудио трек (MP3/WAV)</label>
+                            <input type="file" name="audio" id="audio_input" accept="audio/*" class="text-xs text-slate-500">
+                        </div>
                     </div>
+                    <button type="submit" class="btn-blue mt-auto w-full">ОБРАБОТАТЬ</button>
+                    
+                    <script>
+                    function toggleAudioInput() {
+                        const mode = document.getElementById('audio_mode').value;
+                        const block = document.getElementById('audio_input_block');
+                        const audioInput = document.getElementById('audio_input');
+                        
+                        if (mode === 'merge') {
+                            block.classList.remove('hidden');
+                            audioInput.setAttribute('required', 'required');
+                        } else {
+                            block.classList.add('hidden');
+                            audioInput.removeAttribute('required');
+                        }
+                    }
+                    </script>
                 </form>
             </div>
         </div>
